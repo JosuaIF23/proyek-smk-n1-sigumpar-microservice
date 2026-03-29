@@ -103,11 +103,14 @@ services:
     <<: *service-template
     build: ./backend/vocational-service
     container_name: vocational-service
+    ports:
+      - "3007:3007"
     environment:
       - PORT=3007
       - DB_NAME=vocational_db
-      - DB_USER=vocational_user
-      - DATABASE_URL=postgres://vocational_user:password@localhost:5432/vocational_db
+      - DB_USER=postgres
+      - DB_PASSWORD=
+      - DATABASE_URL=postgres://postgres@localhost:5432/vocational_db
     depends_on: [keycloak]
 
   api-gateway:

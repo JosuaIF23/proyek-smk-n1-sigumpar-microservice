@@ -43,3 +43,64 @@ CREATE TABLE IF NOT EXISTS absensi_pramuka (id SERIAL PRIMARY KEY, siswa_id INTE
 CREATE TABLE IF NOT EXISTS laporan_pramuka (id SERIAL PRIMARY KEY, deskripsi TEXT, file_url TEXT);
 CREATE TABLE IF NOT EXISTS laporan_lokasi_pkl (id SERIAL PRIMARY KEY, siswa_id INTEGER, nama_perusahaan VARCHAR(150), alamat TEXT);
 CREATE TABLE IF NOT EXISTS laporan_progres_pkl (id SERIAL PRIMARY KEY, siswa_id INTEGER, minggu_ke INTEGER, deskripsi TEXT);
+
+-- ============================================================
+-- SKEMA PKL (Praktik Kerja Lapangan)
+-- Ditambahkan di bawah skema Pramuka -- jangan hapus yang atas
+-- ============================================================
+
+-- Replika kelas dari academic-service (untuk JOIN lokal)
+CREATE TABLE IF NOT EXISTS kelas (
+    id            SERIAL PRIMARY KEY,
+    nama_kelas    VARCHAR(50)  NOT NULL,
+    tingkat       VARCHAR(10),
+    wali_kelas_id UUID
+);
+
+-- Replika siswa dari academic-service (untuk JOIN lokal)
+CREATE TABLE IF NOT EXISTS siswa (
+    id            SERIAL PRIMARY KEY,
+    nisn          VARCHAR(20)  UNIQUE NOT NULL,
+    nama_lengkap  VARCHAR(150) NOT NULL,
+    kelas_id      INTEGER REFERENCES kelas(id) ON DELETE SET NULL
+);
+
+-- Pengajuan PKL oleh siswa
+CREATE TABLE IF NOT EXISTS pkl_submissions (
+    id                  SERIAL PRIMARY KEY,
+    siswa_id            INTEGER NOT NULL REFERENCES siswa(id) ON DELETE CASCADE,
+    nama_perusahaan     VARCHAR(150),
+    alamat              TEXT,
+    status_validasi     VARCHAR(20) DEFAULT 'pending',
+    keterangan_layak    TEXT,
+    status_persetujuan  VARCHAR(20) DEFAULT 'pending',
+    created_at          TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Monitoring kunjungan & progres siswa selama PKL
+CREATE TABLE IF NOT EXISTS pkl_monitoring (
+    id                  SERIAL PRIMARY KEY,
+    submission_id       INTEGER NOT NULL REFERENCES pkl_submissions(id) ON DELETE CASCADE,
+    tanggal_kunjungan   DATE,
+    catatan_monitoring  TEXT,
+    progres_siswa       TEXT,
+    file_laporan        TEXT,
+    created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Penilaian akhir PKL per siswa
+CREATE TABLE IF NOT EXISTS pkl_penilaian (
+    id                SERIAL PRIMARY KEY,
+    submission_id     INTEGER NOT NULL UNIQUE REFERENCES pkl_submissions(id) ON DELETE CASCADE,
+    disiplin          NUMERIC(5,2) DEFAULT 0,
+    teknis            NUMERIC(5,2) DEFAULT 0,
+    komunikasi        NUMERIC(5,2) DEFAULT 0,
+    laporan           NUMERIC(5,2) DEFAULT 0,
+    presentasi        NUMERIC(5,2) DEFAULT 0,
+    nilai_akhir       NUMERIC(5,2),
+    grade             VARCHAR(2),
+    catatan_guru      TEXT,
+    status_penilaian  VARCHAR(20) DEFAULT 'Draft',
+    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

@@ -35,28 +35,32 @@ const router = express.Router();
 router.use(verifyToken);
 
 // ===== Kelas Pramuka =====
-router.get("/kelas", kelasController.getAllKelas);
-router.get("/kelas/:id", kelasController.getKelasById);
-router.post("/kelas", kelasController.createKelas);
-router.put("/kelas/:id", kelasController.updateKelas);
-router.delete("/kelas/:id", kelasController.deleteKelas);
+router.get("/kelas", kelasController.getAllKelasPramuka);
+router.get("/kelas/:id", kelasController.getKelasPramukaById);
+router.post("/kelas", kelasController.createKelasPramuka);
+router.put("/kelas/:id", kelasController.updateKelasPramuka);
+router.delete("/kelas/:id", kelasController.deleteKelasPramuka);
 
 // ===== Absensi Pramuka =====
-router.get("/absensi", absensiController.getAllAbsensi);
-router.get("/absensi/:id", absensiController.getAbsensiById);
-router.post("/absensi", absensiController.createAbsensi);
-router.put("/absensi/:id", absensiController.updateAbsensi);
-router.delete("/absensi/:id", absensiController.deleteAbsensi);
+router.get("/absensi", absensiController.getAllAbsensiPramuka);
+router.get("/absensi/:id", absensiController.getAbsensiPramukaById);
+router.post("/absensi", absensiController.createAbsensiPramuka);
+router.put("/absensi/:id", absensiController.updateAbsensiPramuka);
+router.delete("/absensi/:id", absensiController.deleteAbsensiPramuka);
 
 // ===== Laporan Pramuka =====
-router.get("/laporan", laporanController.getAllLaporan);
-router.get("/laporan/:id", laporanController.getLaporanById);
-router.post("/laporan", laporanController.createLaporan);
-router.put("/laporan/:id", laporanController.updateLaporan);
-router.delete("/laporan/:id", laporanController.deleteLaporan);
+router.get("/laporan", laporanController.getAllLaporanPramuka);
+router.get("/laporan/:id", laporanController.getLaporanPramukaById);
+router.post("/laporan", laporanController.createLaporanPramuka);
+router.put("/laporan/:id", laporanController.updateLaporanPramuka);
+router.delete("/laporan/:id", laporanController.deleteLaporanPramuka);
 
 // Mount router dengan prefix
 app.use("/api/pramuka", router);
+
+// Mount PKL routes
+const pklRoutes = require("./routes/pklRoutes");
+app.use("/", pklRoutes);
 
 // 404 handler
 app.use((req, res) => {
