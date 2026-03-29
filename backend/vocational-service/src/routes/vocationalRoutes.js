@@ -1,29 +1,32 @@
 const express = require("express");
-const verifyToken = require('../middleware/auth'); // Import middleware
 const router = express.Router();
-const {
-  getAllTodos,
-  getTodoById,
-  createTodo,
-  updateTodo,
-  deleteTodo,
-} = require("../controllers/vocationalController");
+const verifyToken = require("../middleware/auth");
+const kelasPramukaController = require("../controllers/kelasPramukaController");
+const absensiPramukaController = require("../controllers/absensiPramukaController");
+const laporanPramukaController = require("../controllers/laporanPramukaController");
 
-/**
- * Routes untuk resource /todos
- *
- * GET    /todos       => Ambil semua todos (support filter via query params)
- * POST   /todos       => Buat todo baru
- * GET    /todos/:id   => Ambil todo tertentu
- * PUT    /todos/:id   => Update todo tertentu
- * DELETE /todos/:id   => Hapus todo tertentu
- */
+// Semua route di bawah memerlukan auth
+router.use(verifyToken);
 
-router.route("/").get(getAllTodos).post(createTodo);
-router.route("/:id").get(getTodoById).put(updateTodo).delete(deleteTodo);
+// Kelas Pramuka
+router.get("/kelas", kelasPramukaController.getAllKelasPramuka);
+router.get("/kelas/:id", kelasPramukaController.getKelasPramukaById);
+router.post("/kelas", kelasPramukaController.createKelasPramuka);
+router.put("/kelas/:id", kelasPramukaController.updateKelasPramuka);
+router.delete("/kelas/:id", kelasPramukaController.deleteKelasPramuka);
 
-// Tambahkan verifyToken sebelum memanggil fungsi controller
-router.get('/', verifyToken, controller.getAll);
-router.post('/', verifyToken, controller.create);
+// Absensi Pramuka
+router.get("/absensi", absensiPramukaController.getAllAbsensiPramuka);
+router.get("/absensi/:id", absensiPramukaController.getAbsensiPramukaById);
+router.post("/absensi", absensiPramukaController.createAbsensiPramuka);
+router.put("/absensi/:id", absensiPramukaController.updateAbsensiPramuka);
+router.delete("/absensi/:id", absensiPramukaController.deleteAbsensiPramuka);
+
+// Laporan Pramuka
+router.get("/laporan", laporanPramukaController.getAllLaporanPramuka);
+router.get("/laporan/:id", laporanPramukaController.getLaporanPramukaById);
+router.post("/laporan", laporanPramukaController.createLaporanPramuka);
+router.put("/laporan/:id", laporanPramukaController.updateLaporanPramuka);
+router.delete("/laporan/:id", laporanPramukaController.deleteLaporanPramuka);
 
 module.exports = router;
