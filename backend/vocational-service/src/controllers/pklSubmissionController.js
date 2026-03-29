@@ -57,4 +57,24 @@ const validateAndApprovePKL = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllPKL, validateAndApprovePKL };
+/**
+ * POST /api/vocational/pkl/submissions
+ * Buat pengajuan PKL baru.
+ * Body: { siswa_id, nama_perusahaan, alamat }
+ */
+const createSubmission = async (req, res, next) => {
+  const { siswa_id, nama_perusahaan, alamat } = req.body;
+  try {
+    const result = await pool.query(
+      `INSERT INTO pkl_submissions (siswa_id, nama_perusahaan, alamat)
+       VALUES ($1, $2, $3)
+       RETURNING *`,
+      [siswa_id, nama_perusahaan, alamat]
+    );
+    res.status(201).json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { getAllPKL, validateAndApprovePKL, createSubmission };

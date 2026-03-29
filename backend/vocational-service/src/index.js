@@ -60,7 +60,7 @@ app.use("/api/pramuka", router);
 
 // Mount PKL routes
 const pklRoutes = require("./routes/pklRoutes");
-app.use("/", pklRoutes);
+app.use("/api/pkl", pklRoutes);
 
 // 404 handler
 app.use((req, res) => {

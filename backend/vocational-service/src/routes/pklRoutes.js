@@ -11,15 +11,16 @@ const penilaianCtrl  = require("../controllers/pklPenilaianController");
 router.use(verifyToken);
 
 // --- Submissions ---
-router.get("/api/vocational/pkl/submissions",                submissionCtrl.getAllPKL);
-router.put("/api/vocational/pkl/submissions/:id/validate",   submissionCtrl.validateAndApprovePKL);
+router.get("/submissions",              submissionCtrl.getAllPKL);
+router.post("/submissions",             submissionCtrl.createSubmission);
+router.put("/submissions/:id/validate", submissionCtrl.validateAndApprovePKL);
 
 // --- Monitoring ---
-router.post("/api/vocational/pkl/monitoring",               upload.single("dokumen"), monitoringCtrl.createMonitoring);
-router.get("/api/vocational/pkl/monitoring/:submission_id", monitoringCtrl.getMonitoringBySubmission);
+router.post("/monitoring",               upload.single("dokumen"), monitoringCtrl.createMonitoring);
+router.get("/monitoring/:submission_id", monitoringCtrl.getMonitoringBySubmission);
 
 // --- Penilaian ---
-router.get("/api/vocational/pkl/penilaian/stats",   penilaianCtrl.getPenilaianStats);
-router.post("/api/vocational/pkl/penilaian/upsert", penilaianCtrl.upsertPenilaian);
+router.get("/penilaian/stats",   penilaianCtrl.getPenilaianStats);
+router.post("/penilaian/upsert", penilaianCtrl.upsertPenilaian);
 
 module.exports = router;
