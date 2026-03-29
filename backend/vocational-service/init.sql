@@ -92,13 +92,7 @@ CREATE TABLE IF NOT EXISTS pkl_monitoring (
 CREATE TABLE IF NOT EXISTS pkl_penilaian (
     id                SERIAL PRIMARY KEY,
     submission_id     INTEGER NOT NULL UNIQUE REFERENCES pkl_submissions(id) ON DELETE CASCADE,
-    disiplin          NUMERIC(5,2) DEFAULT 0,
-    teknis            NUMERIC(5,2) DEFAULT 0,
-    komunikasi        NUMERIC(5,2) DEFAULT 0,
-    laporan           NUMERIC(5,2) DEFAULT 0,
-    presentasi        NUMERIC(5,2) DEFAULT 0,
     nilai_akhir       NUMERIC(5,2),
-    grade             VARCHAR(2),
     catatan_guru      TEXT,
     status_penilaian  VARCHAR(20) DEFAULT 'Draft',
     created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

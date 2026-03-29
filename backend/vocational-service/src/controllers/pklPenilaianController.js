@@ -25,47 +25,23 @@ const getPenilaianStats = async (req, res, next) => {
 /**
  * POST /api/pkl/penilaian/upsert
  * Input atau update nilai PKL (UPSERT berdasarkan submission_id).
- * Nilai akhir = rata-rata 5 komponen. Grade ditentukan otomatis.
- * Body: { submission_id, disiplin, teknis, komunikasi, laporan, presentasi,
- *         catatan_guru, status_penilaian }
+ * Body: { submission_id, nilai_akhir, catatan_guru, status_penilaian }
  */
 const upsertPenilaian = async (req, res, next) => {
-  const {
-    submission_id, disiplin, teknis, komunikasi,
-    laporan, presentasi, catatan_guru, status_penilaian,
-  } = req.body;
-
-  // Kalkulasi nilai akhir (rata-rata 5 komponen)
-  const komponen = [disiplin, teknis, komunikasi, laporan, presentasi].map(Number);
-  const nilai_akhir = (komponen.reduce((a, b) => a + b, 0) / komponen.length).toFixed(2);
-
-  // Penentuan grade otomatis
-  let grade = "E";
-  if (nilai_akhir >= 85)      grade = "A";
-  else if (nilai_akhir >= 75) grade = "B";
-  else if (nilai_akhir >= 65) grade = "C";
-  else if (nilai_akhir >= 50) grade = "D";
+  const { submission_id, nilai_akhir, catatan_guru, status_penilaian } = req.body;
 
   try {
     const result = await pool.query(
       `INSERT INTO pkl_penilaian
-         (submission_id, disiplin, teknis, komunikasi, laporan, presentasi,
-          nilai_akhir, grade, catatan_guru, status_penilaian)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+         (submission_id, nilai_akhir, catatan_guru, status_penilaian)
+       VALUES ($1, $2, $3, $4)
        ON CONFLICT (submission_id) DO UPDATE SET
-         disiplin         = EXCLUDED.disiplin,
-         teknis           = EXCLUDED.teknis,
-         komunikasi       = EXCLUDED.komunikasi,
-         laporan          = EXCLUDED.laporan,
-         presentasi       = EXCLUDED.presentasi,
          nilai_akhir      = EXCLUDED.nilai_akhir,
-         grade            = EXCLUDED.grade,
          catatan_guru     = EXCLUDED.catatan_guru,
          status_penilaian = EXCLUDED.status_penilaian,
          updated_at       = CURRENT_TIMESTAMP
        RETURNING *`,
-      [submission_id, disiplin, teknis, komunikasi, laporan,
-       presentasi, nilai_akhir, grade, catatan_guru, status_penilaian]
+      [submission_id, nilai_akhir, catatan_guru, status_penilaian]
     );
     res.json({ success: true, data: result.rows[0] });
   } catch (err) {
